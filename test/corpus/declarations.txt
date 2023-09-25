@@ -1,6 +1,6 @@
-===============
+================================================================================
 local variable
-===============
+================================================================================
 
 class A {
   public int b() {
@@ -8,7 +8,7 @@ class A {
   }
 }
 
----
+--------------------------------------------------------------------------------
 
 (program
   (class_declaration
@@ -26,14 +26,14 @@ class A {
               name: (identifier)
               value: (decimal_integer_literal))))))))
 
-=====================
+================================================================================
 local array variable
-=====================
+================================================================================
 
 String[] nodeNames = internalCluster().getNodeNames();
 Integer[][] inputArrays = new Integer[0x100][];
 
----
+--------------------------------------------------------------------------------
 
 (program
   (local_variable_declaration
@@ -56,17 +56,18 @@ Integer[][] inputArrays = new Integer[0x100][];
       name: (identifier)
       value: (array_creation_expression
         type: (type_identifier)
-        dimensions: (dimensions_expr (hex_integer_literal))
+        dimensions: (dimensions_expr
+          (hex_integer_literal))
         dimensions: (dimensions)))))
 
-==========
+================================================================================
 module
-==========
+================================================================================
 
 module com.foo { }
 open module com.foo { }
 
----
+--------------------------------------------------------------------------------
 
 (program
   (module_declaration
@@ -80,9 +81,9 @@ open module com.foo { }
       name: (identifier))
     body: (module_body)))
 
-==============================
+================================================================================
 module with normal annotation
-==============================
+================================================================================
 
 @RequestForEnhancement(
     id       = 2868724,
@@ -92,77 +93,100 @@ module with normal annotation
 )
 module com.foo { }
 
----
+--------------------------------------------------------------------------------
 
 (program
   (module_declaration
     (annotation
       (identifier)
       (annotation_argument_list
-        (element_value_pair (identifier) (decimal_integer_literal))
-        (element_value_pair (identifier) (string_literal (string_fragment)))
-        (element_value_pair (identifier) (string_literal (string_fragment)))
-        (element_value_pair (identifier) (string_literal (string_fragment)))))
-    (scoped_identifier (identifier) (identifier))
-    (module_body)))
-
-==============================
-module with marker annotation
-==============================
-
-@Preliminary module com.foo { }
-@Preliminary open module com.foo { }
-
----
-
-(program
-  (module_declaration
-    (marker_annotation (identifier))
-    (scoped_identifier (identifier) (identifier))
-    (module_body))
-  (module_declaration
-    (marker_annotation (identifier))
-    (scoped_identifier (identifier) (identifier))
-    (module_body)))
-
-======================================
-module with single element annotation
-======================================
-
-@Copyright("a")
-module com.foo {}
-
----
-
-(program
-  (module_declaration
-    (annotation
-      (identifier)
-      (annotation_argument_list (string_literal (string_fragment))))
+        (element_value_pair
+          (identifier)
+          (decimal_integer_literal))
+        (element_value_pair
+          (identifier)
+          (string_literal
+            (string_fragment)))
+        (element_value_pair
+          (identifier)
+          (string_literal
+            (string_fragment)))
+        (element_value_pair
+          (identifier)
+          (string_literal
+            (string_fragment)))))
     (scoped_identifier
       (identifier)
       (identifier))
     (module_body)))
 
-====================
+================================================================================
+module with marker annotation
+================================================================================
+
+@Preliminary module com.foo { }
+@Preliminary open module com.foo { }
+
+--------------------------------------------------------------------------------
+
+(program
+  (module_declaration
+    (marker_annotation
+      (identifier))
+    (scoped_identifier
+      (identifier)
+      (identifier))
+    (module_body))
+  (module_declaration
+    (marker_annotation
+      (identifier))
+    (scoped_identifier
+      (identifier)
+      (identifier))
+    (module_body)))
+
+================================================================================
+module with single element annotation
+================================================================================
+
+@Copyright("a")
+module com.foo {}
+
+--------------------------------------------------------------------------------
+
+(program
+  (module_declaration
+    (annotation
+      (identifier)
+      (annotation_argument_list
+        (string_literal
+          (string_fragment))))
+    (scoped_identifier
+      (identifier)
+      (identifier))
+    (module_body)))
+
+================================================================================
 package_declaration
-====================
+================================================================================
 
 package myVector;
 
----
+--------------------------------------------------------------------------------
 
- (program (package_declaration (identifier)))
+(program
+  (package_declaration
+    (identifier)))
 
-=================
+================================================================================
 module directive
-=================
+================================================================================
 
 module com.example.foo {
     requires com.example.foo.http;
 }
 
----
+--------------------------------------------------------------------------------
 
 (program
   (module_declaration
@@ -181,9 +205,9 @@ module com.example.foo {
             name: (identifier))
           name: (identifier))))))
 
-==================================================================
+================================================================================
 module directive with requires, exports, opens, uses and provides
-==================================================================
+================================================================================
 
 module com.example.foo {
     requires com.example.http;
@@ -201,103 +225,169 @@ module com.example.foo {
     provides com.example.Intf with com.example.Impl;
 }
 
----
+--------------------------------------------------------------------------------
 
 (program
   (module_declaration
-    (scoped_identifier (scoped_identifier (identifier) (identifier)) (identifier))
+    (scoped_identifier
+      (scoped_identifier
+        (identifier)
+        (identifier))
+      (identifier))
     (module_body
       (requires_module_directive
-        (scoped_identifier (scoped_identifier (identifier) (identifier)) (identifier)))
+        (scoped_identifier
+          (scoped_identifier
+            (identifier)
+            (identifier))
+          (identifier)))
       (requires_module_directive
-        (scoped_identifier (identifier) (identifier)))
+        (scoped_identifier
+          (identifier)
+          (identifier)))
       (requires_module_directive
         (requires_modifier)
-        (scoped_identifier (scoped_identifier (identifier) (identifier)) (identifier)))
+        (scoped_identifier
+          (scoped_identifier
+            (identifier)
+            (identifier))
+          (identifier)))
       (exports_module_directive
-        (scoped_identifier (scoped_identifier (identifier) (identifier)) (identifier)))
+        (scoped_identifier
+          (scoped_identifier
+            (identifier)
+            (identifier))
+          (identifier)))
       (exports_module_directive
-        (scoped_identifier (scoped_identifier (identifier) (identifier)) (identifier))
-        (scoped_identifier (scoped_identifier (identifier) (identifier)) (identifier)))
+        (scoped_identifier
+          (scoped_identifier
+            (identifier)
+            (identifier))
+          (identifier))
+        (scoped_identifier
+          (scoped_identifier
+            (identifier)
+            (identifier))
+          (identifier)))
       (opens_module_directive
-        (scoped_identifier (scoped_identifier (identifier) (identifier)) (identifier)))
+        (scoped_identifier
+          (scoped_identifier
+            (identifier)
+            (identifier))
+          (identifier)))
       (opens_module_directive
-        (scoped_identifier (scoped_identifier (identifier) (identifier)) (identifier))
-        (scoped_identifier (scoped_identifier (identifier) (identifier)) (identifier))
-        (scoped_identifier (scoped_identifier (identifier) (identifier)) (identifier)))
+        (scoped_identifier
+          (scoped_identifier
+            (identifier)
+            (identifier))
+          (identifier))
+        (scoped_identifier
+          (scoped_identifier
+            (identifier)
+            (identifier))
+          (identifier))
+        (scoped_identifier
+          (scoped_identifier
+            (identifier)
+            (identifier))
+          (identifier)))
       (uses_module_directive
-        (scoped_identifier (scoped_identifier (identifier) (identifier)) (identifier)))
+        (scoped_identifier
+          (scoped_identifier
+            (identifier)
+            (identifier))
+          (identifier)))
       (provides_module_directive
-        (scoped_identifier (scoped_identifier (identifier) (identifier)) (identifier))
-        (scoped_identifier (scoped_identifier (identifier) (identifier)) (identifier))))))
+        (scoped_identifier
+          (scoped_identifier
+            (identifier)
+            (identifier))
+          (identifier))
+        (scoped_identifier
+          (scoped_identifier
+            (identifier)
+            (identifier))
+          (identifier))))))
 
-===============================
+================================================================================
 single type import declaration
-===============================
+================================================================================
 
 import java.util.Vector;
 
----
+--------------------------------------------------------------------------------
 
-(program (import_declaration
-  (single_type_import
-    (scoped_identifier (scoped_identifier (identifier) (identifier)) (identifier)))))
+(program
+  (import_declaration
+    (scoped_identifier
+      (scoped_identifier
+        (identifier)
+        (identifier))
+      (identifier))))
 
-===========================
+================================================================================
 type_import_on_declaraction
-===========================
+================================================================================
 
 import java.util.*;
 
----
+--------------------------------------------------------------------------------
 
-(program (import_declaration
-  (type_import_on_demand
-    (scoped_identifier (identifier) (identifier)) (asterisk))))
+(program
+  (import_declaration
+    (scoped_identifier
+      (identifier)
+      (identifier))
+    (asterisk)))
 
-=================================
+================================================================================
 single static import declaration
-=================================
+================================================================================
 
 import static java.util.Vector;
 
----
+--------------------------------------------------------------------------------
 
-(program (import_declaration
-  (single_static_import
-    (scoped_identifier (identifier) (identifier))
-    (identifier))))
+(program
+  (import_declaration
+    (scoped_identifier
+      (scoped_identifier
+        (identifier)
+        (identifier))
+      (identifier))))
 
-===================================
+================================================================================
 static import on demand declaration
-===================================
+================================================================================
 
 import static java.util.*;
 
----
+--------------------------------------------------------------------------------
 
-(program (import_declaration
-  (static_import_on_demand
-    (scoped_identifier (identifier) (identifier))
-    (asterisk))))
+(program
+  (import_declaration
+    (scoped_identifier
+      (identifier)
+      (identifier))
+    (asterisk)))
 
-=================
+================================================================================
 class declaration
-=================
+================================================================================
 
 class Point {
 }
 
----
+--------------------------------------------------------------------------------
 
 (program
   (class_declaration
     (identifier)
-      (class_body)))
+    (class_body)))
 
-=====================================================================
+================================================================================
 class declaration involving public, private, abstract and superclass
-=====================================================================
+================================================================================
 
 public class Point {
 }
@@ -308,30 +398,45 @@ private class Point {
 abstract class ColoredPoint extends Point {
 }
 
----
+--------------------------------------------------------------------------------
 
 (program
-  (class_declaration (modifiers) (identifier) (class_body))
-  (class_declaration (modifiers) (identifier) (class_body))
-  (class_declaration (modifiers) (identifier) (superclass (type_identifier)) (class_body)))
+  (class_declaration
+    (modifiers)
+    (identifier)
+    (class_body))
+  (class_declaration
+    (modifiers)
+    (identifier)
+    (class_body))
+  (class_declaration
+    (modifiers)
+    (identifier)
+    (superclass
+      (type_identifier))
+    (class_body)))
 
-==================================
+================================================================================
 class declaration with implements
-==================================
+================================================================================
 
 public class Dog implements ISpeak {
 }
 
----
+--------------------------------------------------------------------------------
 
 (program
   (class_declaration
-     (modifiers) (identifier)
-     (super_interfaces (type_list (type_identifier))) (class_body)))
+    (modifiers)
+    (identifier)
+    (super_interfaces
+      (type_list
+        (type_identifier)))
+    (class_body)))
 
-============================
+================================================================================
 class declaration with body
-============================
+================================================================================
 
 class Point {
   int x;
@@ -341,7 +446,7 @@ class Point {
   }
 }
 
----
+--------------------------------------------------------------------------------
 
 (program
   (class_declaration
@@ -349,63 +454,74 @@ class Point {
     (class_body
       (field_declaration
         (integral_type)
-        (variable_declarator (identifier)))
+        (variable_declarator
+          (identifier)))
       (method_declaration
         (void_type)
         (identifier)
         (formal_parameters)
         (block
           (expression_statement
-            (assignment_expression (identifier) (decimal_integer_literal))))))))
+            (assignment_expression
+              (identifier)
+              (decimal_integer_literal))))))))
 
-======================
+================================================================================
 interface declaration
-======================
+================================================================================
 
 interface Top {
 }
 
----
+--------------------------------------------------------------------------------
 
 (program
   (interface_declaration
     (identifier)
     (interface_body)))
 
-===================================
+================================================================================
 interface declaration with extends
-===================================
+================================================================================
 
 interface Left extends Top {
 }
 
 interface Bottom extends Left, Right {}
 
----
+--------------------------------------------------------------------------------
 
 (program
   (interface_declaration
     (identifier)
-    (extends_interfaces (type_list (type_identifier)))
+    (extends_interfaces
+      (type_list
+        (type_identifier)))
     (interface_body))
   (interface_declaration
     (identifier)
-    (extends_interfaces (type_list (type_identifier) (type_identifier))) (interface_body)))
+    (extends_interfaces
+      (type_list
+        (type_identifier)
+        (type_identifier)))
+    (interface_body)))
 
-===========================================
+================================================================================
 interface with annotation type declaration
-===========================================
+================================================================================
 
 @interface SelfRef {}
 
----
+--------------------------------------------------------------------------------
 
 (program
-  (annotation_type_declaration (identifier) (annotation_type_body)))
+  (annotation_type_declaration
+    (identifier)
+    (annotation_type_body)))
 
-===================
+================================================================================
 method declaration
-===================
+================================================================================
 
 class Beyonce {
   void calculateAnswer(double wingSpan, int numberOfEngines,
@@ -414,7 +530,7 @@ class Beyonce {
   }
 }
 
----
+--------------------------------------------------------------------------------
 
 (program
   (class_declaration
@@ -424,15 +540,24 @@ class Beyonce {
         (void_type)
         (identifier)
         (formal_parameters
-          (formal_parameter (floating_point_type) (identifier))
-          (formal_parameter (integral_type) (identifier))
-          (formal_parameter (floating_point_type) (identifier))
-          (formal_parameter (floating_point_type) (identifier)))
-        (block (line_comment))))))
+          (formal_parameter
+            (floating_point_type)
+            (identifier))
+          (formal_parameter
+            (integral_type)
+            (identifier))
+          (formal_parameter
+            (floating_point_type)
+            (identifier))
+          (formal_parameter
+            (floating_point_type)
+            (identifier)))
+        (block
+          (line_comment))))))
 
-========================
+================================================================================
 constructor declaration
-========================
+================================================================================
 
 class Point {
   int x, y;
@@ -446,7 +571,7 @@ class Point {
   }
 }
 
----
+--------------------------------------------------------------------------------
 
 (program
   (class_declaration
@@ -454,8 +579,10 @@ class Point {
     body: (class_body
       (field_declaration
         type: (integral_type)
-        declarator: (variable_declarator name: (identifier))
-        declarator: (variable_declarator name: (identifier)))
+        declarator: (variable_declarator
+          name: (identifier))
+        declarator: (variable_declarator
+          name: (identifier)))
       (constructor_declaration
         name: (identifier)
         parameters: (formal_parameters
@@ -466,16 +593,18 @@ class Point {
             type: (integral_type)
             name: (identifier)))
         body: (constructor_body
-          (expression_statement (assignment_expression
-            left: (field_access
-              object: (this)
-              field: (identifier))
-            right: (identifier)))
-          (expression_statement (assignment_expression
-            left: (field_access
-              object: (this)
-              field: (identifier))
-            right: (identifier)))))
+          (expression_statement
+            (assignment_expression
+              left: (field_access
+                object: (this)
+                field: (identifier))
+              right: (identifier)))
+          (expression_statement
+            (assignment_expression
+              left: (field_access
+                object: (this)
+                field: (identifier))
+              right: (identifier)))))
       (constructor_declaration
         name: (identifier)
         parameters: (formal_parameters)
@@ -486,9 +615,89 @@ class Point {
               (decimal_integer_literal)
               (decimal_integer_literal))))))))
 
-=======
+================================================================================
+Nested field expression in receiver parameter
+================================================================================
+
+public class Inner1<T> {
+    public class Inner2 {
+        public class Inner3 {
+            public Inner3(GetAnnotatedReceiverType.Inner1<T>.Inner2 GetAnnotatedReceiverType.Inner1.Inner2.this) {}
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(program
+  (class_declaration
+    (modifiers)
+    (identifier)
+    (type_parameters
+      (type_parameter
+        (type_identifier)))
+    (class_body
+      (class_declaration
+        (modifiers)
+        (identifier)
+        (class_body
+          (class_declaration
+            (modifiers)
+            (identifier)
+            (class_body
+              (constructor_declaration
+                (modifiers)
+                (identifier)
+                (formal_parameters
+                  (receiver_parameter
+                    (scoped_type_identifier
+                      (generic_type
+                        (scoped_type_identifier
+                          (type_identifier)
+                          (type_identifier))
+                        (type_arguments
+                          (type_identifier)))
+                      (type_identifier))
+                    (identifier)
+                    (identifier)
+                    (identifier)
+                    (this)))
+                (constructor_body)))))))))
+
+================================================================================
+Receiver parameter with additional parameters
+================================================================================
+
+public class A {
+  public B(A this) {}
+
+  public C(A this, D that) {}
+}
+
+---
+
+(program
+  (class_declaration
+    (modifiers)
+    (identifier)
+    (class_body
+      (constructor_declaration
+        (modifiers)
+        (identifier)
+        (formal_parameters
+          (receiver_parameter (type_identifier) (this)))
+        (constructor_body))
+      (constructor_declaration
+        (modifiers)
+        (identifier)
+        (formal_parameters
+          (receiver_parameter (type_identifier) (this))
+          (formal_parameter (type_identifier) (identifier)))
+        (constructor_body)))))
+
+================================================================================
 throws
-=======
+================================================================================
 
 class Beyonce {
   BufferedReader newReader() throws FileNotFoundException {
@@ -496,33 +705,35 @@ class Beyonce {
   }
 }
 
----
+--------------------------------------------------------------------------------
 
 (program
   (class_declaration
     (identifier)
-      (class_body
-        (method_declaration
-          (type_identifier)
-          (identifier)
-          (formal_parameters)
-          (throws (type_identifier))
-          (block
-            (expression_statement
-              (object_creation_expression
-                (type_identifier)
-                (argument_list
-                  (object_creation_expression
-                    (type_identifier)
-                    (argument_list
-                      (object_creation_expression
-                        (type_identifier)
-                        (argument_list (identifier)))
-                      (identifier)))))))))))
+    (class_body
+      (method_declaration
+        (type_identifier)
+        (identifier)
+        (formal_parameters)
+        (throws
+          (type_identifier))
+        (block
+          (expression_statement
+            (object_creation_expression
+              (type_identifier)
+              (argument_list
+                (object_creation_expression
+                  (type_identifier)
+                  (argument_list
+                    (object_creation_expression
+                      (type_identifier)
+                      (argument_list
+                        (identifier)))
+                    (identifier)))))))))))
 
-======================
+================================================================================
 object instantiation
-======================
+================================================================================
 
 class Point {
   public double Foo() {
@@ -531,7 +742,7 @@ class Point {
   }
 }
 
----
+--------------------------------------------------------------------------------
 
 (program
   (class_declaration
@@ -553,9 +764,9 @@ class Point {
               (type_identifier)
               (argument_list))))))))
 
-=====================
+================================================================================
 variable declaration
-=====================
+================================================================================
 
 class JayZ {
   public void Beyonce() {
@@ -563,7 +774,7 @@ class JayZ {
   };
 }
 
----
+--------------------------------------------------------------------------------
 
 (program
   (class_declaration
@@ -580,28 +791,30 @@ class JayZ {
             (variable_declarator
               (identifier))))))))
 
-=================
+================================================================================
 enum declaration
-=================
+================================================================================
 
 enum HandSign {
    SCISSOR, PAPER, STONE
 }
 
----
+--------------------------------------------------------------------------------
 
 (program
   (enum_declaration
     name: (identifier)
     body: (enum_body
-      (enum_constant name: (identifier))
-      (enum_constant name: (identifier))
-      (enum_constant name: (identifier)))))
+      (enum_constant
+        name: (identifier))
+      (enum_constant
+        name: (identifier))
+      (enum_constant
+        name: (identifier)))))
 
-
-=================
+================================================================================
 enum declaration inside an interface
-=================
+================================================================================
 
 public @interface Foo {
   enum HandSign {
@@ -609,67 +822,67 @@ public @interface Foo {
   }
 }
 
----
+--------------------------------------------------------------------------------
 
-    (program
-      (annotation_type_declaration
-        (modifiers)
+(program
+  (annotation_type_declaration
+    (modifiers)
+    name: (identifier)
+    body: (annotation_type_body
+      (enum_declaration
         name: (identifier)
-        body: (annotation_type_body
-          (enum_declaration
-            name: (identifier)
-            body: (enum_body
-              (enum_constant
-                name: (identifier))
-              (enum_constant
-                name: (identifier))
-              (enum_constant
-                name: (identifier)))))))
+        body: (enum_body
+          (enum_constant
+            name: (identifier))
+          (enum_constant
+            name: (identifier))
+          (enum_constant
+            name: (identifier)))))))
 
-=================
+================================================================================
 record declaration
-==================
+================================================================================
 
 public record Foo(int bar) {
 }
 
----
+--------------------------------------------------------------------------------
 
 (program
   (record_declaration
-        (modifiers)
-        name: (identifier)
-        parameters: (formal_parameters
-          (formal_parameter
-            type: (integral_type)
-            name: (identifier)))
-        body: (class_body)))
+    (modifiers)
+    name: (identifier)
+    parameters: (formal_parameters
+      (formal_parameter
+        type: (integral_type)
+        name: (identifier)))
+    body: (class_body)))
 
-================================
+================================================================================
 record declaration with generics
-================================
+================================================================================
 
 public record Foo<T>(T bar) {
 }
 
----
+--------------------------------------------------------------------------------
 
 (program
   (record_declaration
-        (modifiers)
-        name: (identifier)
-        type_parameters: (type_parameters
-          (type_parameter
-            (type_identifier)))
-        parameters: (formal_parameters
-          (formal_parameter
-            type: (type_identifier)
-            name: (identifier)))
-        body: (class_body)))
+    (modifiers)
+    name: (identifier)
+    type_parameters: (type_parameters
+      (type_parameter
+        (type_identifier)))
+    parameters: (formal_parameters
+      (formal_parameter
+        type: (type_identifier)
+        name: (identifier)))
+    body: (class_body)))
 
-=================================
+================================================================================
 record declaration inside a class
-=================================
+================================================================================
 
 public class Usecase {
     public static record Commande(@NotNull String param) {
@@ -679,7 +892,7 @@ public class Usecase {
     }
 }
 
----
+--------------------------------------------------------------------------------
 
 (program
   (class_declaration
@@ -709,13 +922,13 @@ public class Usecase {
                   arguments: (argument_list
                     (string_literal)))))))))))
 
-======================================
+================================================================================
 record declaration inside an interface
-======================================
+================================================================================
 
 interface I { record R(int a) {} }
 
----
+--------------------------------------------------------------------------------
 
 (program
   (interface_declaration
@@ -729,18 +942,17 @@ interface I { record R(int a) {} }
             (identifier)))
         (class_body)))))
 
-
-===========================================
+================================================================================
 record declaration with compact constructor
-===========================================
+================================================================================
 
 record Person(int age) {
   public Person {
-    if (age < 0) throw new IllegalArgumentException("invalid age"); 
+    if (age < 0) throw new IllegalArgumentException("invalid age");
   }
 }
 
----
+--------------------------------------------------------------------------------
 
 (program
   (record_declaration
@@ -764,15 +976,15 @@ record Person(int age) {
                 (type_identifier)
                 (argument_list
                   (string_literal
-                        (string_fragment)))))))))))
+                    (string_fragment)))))))))))
 
-============================================
+================================================================================
 record declaration that implements interface
-============================================
+================================================================================
 
 record R() implements I {}
 
----
+--------------------------------------------------------------------------------
 
 (program
   (record_declaration
@@ -783,10 +995,9 @@ record R() implements I {}
         (type_identifier)))
     (class_body)))
 
-
-==============================================
+================================================================================
 class declaration with dollar-sign identifiers
-==============================================
+================================================================================
 
 class A$B {
   void func() {
@@ -795,7 +1006,7 @@ class A$B {
   }
 }
 
----
+--------------------------------------------------------------------------------
 
 (program
   (class_declaration
@@ -815,9 +1026,9 @@ class A$B {
               (identifier)
               (argument_list))))))))
 
-================
+================================================================================
  Sealed classes
-================
+================================================================================
 
 sealed interface A permits B, C {
 
@@ -826,28 +1037,162 @@ sealed interface A permits B, C {
 final class B implements A {}
 non-sealed interface C extends A {}
 
+--------------------------------------------------------------------------------
+
+(program
+  (interface_declaration
+    (modifiers)
+    (identifier)
+    (permits
+      (type_list
+        (type_identifier)
+        (type_identifier)))
+    (interface_body))
+  (class_declaration
+    (modifiers)
+    (identifier)
+    (super_interfaces
+      (type_list
+        (type_identifier)))
+    (class_body))
+  (interface_declaration
+    (modifiers)
+    (identifier)
+    (extends_interfaces
+      (type_list
+        (type_identifier)))
+    (interface_body)))
+
+================================================================================
+Reserved identifiers
+================================================================================
+
+public @interface Reserved {
+    String module();
+}
+
+public class Keywords {
+  public void demo() {
+    int sealed = 0;
+    bool yield = false;
+  }
+}
+
+--------------------------------------------------------------------------------
+
+(program
+  (annotation_type_declaration
+    (modifiers)
+    (identifier)
+    (annotation_type_body
+      (annotation_type_element_declaration
+        (type_identifier)
+        (identifier))))
+  (class_declaration
+    (modifiers)
+    (identifier)
+    (class_body
+      (method_declaration
+        (modifiers)
+        (void_type)
+        (identifier)
+        (formal_parameters)
+        (block
+          (local_variable_declaration
+            (integral_type)
+            (variable_declarator
+              (identifier)
+              (decimal_integer_literal)))
+          (local_variable_declaration
+            (type_identifier)
+            (variable_declarator
+              (identifier)
+              (false))))))))
+
+================================================================================
+Annontations
+================================================================================
+
+public class Anno {
+  public void anno() {
+    this.ABCÃ¢ = new @Anno Point();
+  }
+}
+
+--------------------------------------------------------------------------------
+
+(program
+  (class_declaration
+    (modifiers)
+    (identifier)
+    (class_body
+      (method_declaration
+        (modifiers)
+        (void_type)
+        (identifier)
+        (formal_parameters)
+        (block
+          (expression_statement
+            (assignment_expression
+              (field_access
+                (this)
+                (identifier))
+              (object_creation_expression
+                (marker_annotation
+                  (identifier))
+                (type_identifier)
+                (argument_list)))))))))
+
+================================================================================
+unnamed class
+================================================================================
+
+void main() {
+}
+
+--------------------------------------------------------------------------------
+
+(program
+  (method_declaration
+    (void_type)
+    (identifier)
+    (formal_parameters)
+    (block)))
+
+================================================================================
+Annotation following type arguments
+================================================================================
+
+public class A {
+  public B() {
+    return new <@BG Inner> @BH Inner<@BI Inner>(null);
+  }
+}
+
 ---
 
 (program
-      (interface_declaration
+  (class_declaration
+    (modifiers)
+    (identifier)
+    (class_body
+      (constructor_declaration
         (modifiers)
         (identifier)
-        (permits
-          (type_list
-            (type_identifier)
-            (type_identifier)))
-        (interface_body))
-      (class_declaration
-        (modifiers)
-        (identifier)
-        (super_interfaces
-          (type_list
-            (type_identifier)))
-        (class_body))
-      (interface_declaration
-        (modifiers)
-        (identifier)
-        (extends_interfaces
-          (type_list
-            (type_identifier)))
-        (interface_body)))
+        (formal_parameters)
+        (constructor_body
+          (return_statement
+            (object_creation_expression
+              (type_arguments
+                (annotated_type
+                  (marker_annotation (identifier))
+                  (type_identifier)))
+              (marker_annotation (identifier))
+              (generic_type
+                (type_identifier)
+                (type_arguments
+                  (annotated_type
+                    (marker_annotation (identifier))
+                    (type_identifier))))
+              (argument_list
+                (null_literal)))))))))

@@ -53,9 +53,8 @@ module.exports = grammar({
   inline: $ => [
     $._name,
     $._simple_type,
-    $._reserved_identifier,
     $._class_body_declaration,
-    $._variable_initializer
+    $._variable_initializer,
   ],
 
   conflicts: $ => [
@@ -71,13 +70,18 @@ module.exports = grammar({
     // Only conflicts in switch expressions
     [$.lambda_expression, $.primary_expression],
     [$.inferred_parameters, $.primary_expression],
-    [$.class_literal, $.field_access],
+    [$.argument_list, $.record_pattern_body],
   ],
 
   word: $ => $.identifier,
 
   rules: {
-    program: $ => repeat($.statement),
+    program: $ => repeat($._toplevel_statement),
+
+    _toplevel_statement: $ => choice(
+      $.statement,
+      $.method_declaration,
+    ),
 
     // Literals
 
@@ -159,6 +163,7 @@ module.exports = grammar({
       repeat(choice(
         $.string_fragment,
         $.escape_sequence,
+        $.string_interpolation,
       )),
       '"'
     ),
@@ -167,27 +172,31 @@ module.exports = grammar({
       repeat(choice(
         alias($._multiline_string_fragment, $.multiline_string_fragment),
         $._escape_sequence,
+        $.string_interpolation,
       )),
       '"""'
     ),
     // Workaround to https://github.com/tree-sitter/tree-sitter/issues/1156
     // We give names to the token() constructs containing a regexp
     // so as to obtain a node in the CST.
-    //
-    string_fragment: $ =>
-      token.immediate(prec(1, /[^"\\]+/)),
-    _multiline_string_fragment: () =>
-      prec.right(choice(
-        /[^"]+/,
-        seq(/"[^"]*/, repeat(/[^"]+/))
-      )),
 
-    _escape_sequence: $ =>
-      choice(
-        prec(2, token.immediate(seq('\\', /[^abfnrtvxu'\"\\\?]/))),
-        prec(1, $.escape_sequence)
-      ),
-    escape_sequence: () => token.immediate(seq(
+    string_fragment: _ => token.immediate(prec(1, /[^"\\]+/)),
+    _multiline_string_fragment: _ => choice(
+      /[^"\\]+/,
+      seq(/"([^"\\]|\\")*/),
+    ),
+
+    string_interpolation: $ => seq(
+      '\\{',
+      $.expression,
+      '}'
+    ),
+
+    _escape_sequence: $ => choice(
+      prec(2, token.immediate(seq('\\', /[^abfnrtvxu'\"\\\?]/))),
+      prec(1, $.escape_sequence)
+    ),
+    escape_sequence: _ => token.immediate(seq(
       '\\',
       choice(
         /[^xu0-7]/,
@@ -197,7 +206,7 @@ module.exports = grammar({
         /u{[0-9a-fA-F]+}/
       ))),
 
-    null_literal: $ => 'null',
+    null_literal: _ => 'null',
 
     // Expressions
 
@@ -273,8 +282,13 @@ module.exports = grammar({
       field('left', $.expression),
       'instanceof',
       optional('final'),
-      field('right', $._type),
-      field('name', optional(choice($.identifier, $._reserved_identifier)))
+      choice(
+        seq(
+          field('right', $._type),
+          optional(field('name', choice($.identifier, $._reserved_identifier))),
+        ),
+        field('pattern', $.record_pattern),
+      ),
     )),
 
     lambda_expression: $ => seq(
@@ -332,6 +346,7 @@ module.exports = grammar({
       $.method_invocation,
       $.method_reference,
       $.array_creation_expression,
+      $.template_expression
     ),
 
     array_creation_expression: $ => prec.right(seq(
@@ -365,7 +380,14 @@ module.exports = grammar({
 
     _unqualified_object_creation_expression: $ => prec.right(seq(
       'new',
-      field('type_arguments', optional($.type_arguments)),
+      choice(
+        seq(
+          repeat($._annotation),
+          field('type_arguments', $.type_arguments),
+          repeat($._annotation),
+        ),
+        repeat($._annotation),
+      ),
       field('type', $._simple_type),
       field('arguments', $.argument_list),
       optional($.class_body)
@@ -379,6 +401,12 @@ module.exports = grammar({
       )),
       '.',
       field('field', choice($.identifier, $._reserved_identifier, $.this))
+    ),
+
+    template_expression: $ => seq(
+      field('template_processor', $.primary_expression),
+      '.',
+      field('template_argument', $.string_literal)
     ),
 
     array_access: $ => seq(
@@ -462,9 +490,33 @@ module.exports = grammar({
     ),
 
     switch_label: $ => choice(
-      seq('case', commaSep1($.expression)),
+      seq('case',
+        choice(
+          $.pattern,
+          commaSep1($.expression)
+        ),
+        optional($.guard)
+      ),
       'default'
     ),
+
+    pattern: $ => choice(
+      $.type_pattern,
+      $.record_pattern,
+    ),
+    type_pattern: $ => seq($._unannotated_type, choice($.identifier, $._reserved_identifier)),
+    record_pattern: $ => seq(choice($.identifier, $._reserved_identifier, $.generic_type), $.record_pattern_body),
+    record_pattern_body: $ => seq('(', commaSep(choice($.record_pattern_component, $.record_pattern)), ')'),
+    record_pattern_component: $ => choice(
+      $.underscore_pattern,
+      seq(
+        $._unannotated_type,
+        choice($.identifier, $._reserved_identifier)
+    )),
+
+    underscore_pattern: $ => '_',
+
+    guard: $ => seq('when', $.expression),
 
     // Statements
 
@@ -999,13 +1051,15 @@ module.exports = grammar({
     ),
 
     annotation_type_body: $ => seq(
-      '{', repeat(choice(
+      '{',
+      repeat(choice(
         $.annotation_type_element_declaration,
         $.constant_declaration,
         $.class_declaration,
         $.interface_declaration,
         $.enum_declaration,
-        $.annotation_type_declaration
+        $.annotation_type_declaration,
+        ';',
       )),
       '}'
     ),
@@ -1013,7 +1067,7 @@ module.exports = grammar({
     annotation_type_element_declaration: $ => seq(
       optional($.modifiers),
       field('type', $._unannotated_type),
-      field('name', $.identifier),
+      field('name', choice($.identifier, $._reserved_identifier)),
       '(', ')',
       field('dimensions', optional($.dimensions)),
       optional($._default_value),
@@ -1072,7 +1126,7 @@ module.exports = grammar({
     ),
 
     _variable_declarator_id: $ => seq(
-      field('name', choice($.identifier, $._reserved_identifier)),
+      field('name', choice($.identifier, $._reserved_identifier, $.underscore_pattern)),
       field('dimensions', optional($.dimensions))
     ),
 
@@ -1174,8 +1228,13 @@ module.exports = grammar({
 
     formal_parameters: $ => seq(
       '(',
-      optional($.receiver_parameter),
-      commaSep(choice($.formal_parameter, $.spread_parameter)),
+      choice(
+        $.receiver_parameter,
+        seq(
+          optional(seq($.receiver_parameter, ',')),
+          commaSep(choice($.formal_parameter, $.spread_parameter)),
+        ),
+      ),
       ')'
     ),
 
@@ -1188,7 +1247,7 @@ module.exports = grammar({
     receiver_parameter: $ => seq(
       repeat($._annotation),
       $._unannotated_type,
-      optional(seq($.identifier, '.')),
+      repeat(seq($.identifier, '.')),
       $.this
     ),
 
@@ -1222,18 +1281,24 @@ module.exports = grammar({
       field('body', $.block)
     ),
 
-    _reserved_identifier: $ => alias(choice(
-      'open',
-      'module',
-      'record'
-    ), $.identifier),
+    _reserved_identifier: $ => prec(-3, alias(
+      choice(
+        'open',
+        'module',
+        'record',
+        'with',
+        'yield',
+        'sealed',
+      ),
+      $.identifier,
+    )),
 
     this: $ => 'this',
 
     super: $ => 'super',
 
     // https://docs.oracle.com/javase/specs/jls/se8/html/jls-3.html#jls-IdentifierChars
-    identifier: $ => /[\p{L}_$][\p{L}\p{Nd}_$]*/,
+    identifier: $ => /[\p{L}_$][\p{L}\p{Nd}\u00A2_$]*/,
 
     // http://stackoverflow.com/questions/13014947/regex-to-match-a-c-style-multiline-comment/36328890#36328890
     comment: $ => choice(
