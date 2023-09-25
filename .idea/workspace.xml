@@ -5,7 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7e8e247e-acbf-4933-a001-5f4929e1bb3e" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/src/parser.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/parser.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test/corpus/declarations.txt" beforeDir="false" afterPath="$PROJECT_DIR$/test/corpus/declarations.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -19,9 +19,9 @@
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 1
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 1
+}</component>
   <component name="ProjectId" id="2T1YgvSqLYwTVhtxLDZM0sbfwvU" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -32,7 +32,7 @@
     "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "merge-upstream",
+    "git-widget-placeholder": "master",
     "last_opened_file_path": "/home/itsaky/Projects/ide/treesitter/tree-sitter-java",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -52,6 +52,7 @@
       <updated>1690212169049</updated>
       <workItem from="1690212170119" duration="1051000" />
       <workItem from="1695666102035" duration="304000" />
+      <workItem from="1695666415267" duration="286000" />
     </task>
     <servers />
   </component>
