@@ -1,3 +1,7 @@
+; Variables
+
+(identifier) @variable
+
 ; Methods
 
 (package_declaration
@@ -79,12 +83,12 @@
   (void_type)
 ] @type.builtin
 
-; Variables
+; Constants
 
 ((identifier) @constant
  (#match? @constant "^_*[A-Z][A-Z\\d_]+$"))
 
-(identifier) @variable
+; Builtins
 
 (this) @variable.builtin
 
